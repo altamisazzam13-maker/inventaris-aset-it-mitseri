@@ -90,6 +90,15 @@ php artisan serve --host=127.0.0.1 --port=8000
 | `DB_DATABASE` | Database name | `railway` |
 | `DB_USERNAME` | Username | `postgres` |
 | `DB_PASSWORD` | Password | `********` |
+| `MAIL_MAILER` | Mail driver (smtp, sendmail, log) | `smtp` |
+| `MAIL_HOST` | SMTP host | `smtp.mailtrap.io` |
+| `MAIL_PORT` | SMTP port | `2525` |
+| `MAIL_USERNAME` | SMTP username | `your_username` |
+| `MAIL_PASSWORD` | SMTP password | `your_password` |
+| `MAIL_ENCRYPTION` | Encryption (`tls`/`ssl`) | `tls` |
+| `CACHE_DRIVER` | Cache driver | `file` |
+| `SESSION_DRIVER` | Session driver | `file` |
+| `QUEUE_CONNECTION` | Queue driver | `sync` |
 
 ---
 
