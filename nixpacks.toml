@@ -1,7 +1,7 @@
 providers = ["...", "node", "php"]
 
 [phases.setup]
-nixPkgs = ["...", "php82", "php82Packages.composer", "nodejs_22"]
+nixPkgs = ["...", "php82", "php82Packages.composer", "php82Extensions.pdo_mysql", "nodejs_22"]
 
 [phases.build]
 cmds = [
