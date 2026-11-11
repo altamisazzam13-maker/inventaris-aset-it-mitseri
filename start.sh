@@ -3,6 +3,9 @@ set -e
 
 echo "=== Memulai Aplikasi Inventaris Aset IT ==="
 
+# Pastikan folder storage dan cache writable
+chmod -R 777 storage bootstrap/cache 2>/dev/null || true
+
 # Link storage jika belum ada
 php artisan storage:link || true
 
@@ -17,3 +20,4 @@ php artisan db:seed --class=UserSeeder --force || echo "Peringatan: Seeder gagal
 # Jalankan web server Laravel
 echo "=== Menjalankan Web Server di Port $PORT ==="
 exec php artisan serve --host=0.0.0.0 --port=$PORT
+
