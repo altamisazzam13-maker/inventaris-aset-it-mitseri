@@ -3,6 +3,11 @@ set -e
 
 echo "=== Memulai Aplikasi Inventaris Aset IT ==="
 
+# Fallback APP_KEY jika belum diset di Railway Variables
+if [ -z "$APP_KEY" ]; then
+    export APP_KEY="base64:up4y0gc5iu9K+p/CbqGrGziR1AYz2RTMu7DarGu6u4Y="
+fi
+
 # Pastikan folder storage dan cache writable
 chmod -R 777 storage bootstrap/cache 2>/dev/null || true
 
