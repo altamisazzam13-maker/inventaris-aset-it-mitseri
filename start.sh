@@ -4,29 +4,22 @@ set -e
 echo "=== Memulai Aplikasi Inventaris Aset IT ==="
 
 # ============================================================
-# STEP 1: Paksa semua variabel DB, Session, Cache ke SQLite/file
-# (override variabel Railway yang mungkin mengarah ke MySQL)
+# STEP 1: Pastikan APP_KEY tersedia
 # ============================================================
-export DB_CONNECTION=sqlite
-export DB_DATABASE=/app/database/database.sqlite
-export SESSION_DRIVER=file
-export CACHE_STORE=file
-export QUEUE_CONNECTION=sync
-
-# Pastikan APP_KEY tersedia (fallback bila tidak di-set di Railway)
 if [ -z "$APP_KEY" ]; then
     export APP_KEY="base64:QSXpJqTh5tV1bsyeahj7c3WbNySvNFq+XqxrLbmRQ+M="
 fi
 
+# Paksa session dan cache ke file (tidak butuh DB)
+export SESSION_DRIVER=file
+export CACHE_STORE=file
+export QUEUE_CONNECTION=sync
+
 # ============================================================
 # STEP 2: Buat direktori yang diperlukan dan set permission
 # ============================================================
-mkdir -p storage/framework/{sessions,views,cache} bootstrap/cache database 2>/dev/null || true
-chmod -R 777 storage bootstrap/cache 2>/dev/null || true
-
-# Buat file SQLite
-touch database/database.sqlite 2>/dev/null || true
-chmod 666 database/database.sqlite 2>/dev/null || true
+mkdir -p storage/framework/{sessions,views,cache} bootstrap/cache 2>/dev/null || true
+chmod -R 775 storage bootstrap/cache 2>/dev/null || true
 
 # ============================================================
 # STEP 3: Buat .env dari .env.example bila belum ada
@@ -35,16 +28,14 @@ if [ ! -f .env ]; then
     cp .env.example .env
 fi
 
-# Tulis semua variabel penting ke .env (override nilai lama)
-sed -i "s|^DB_CONNECTION=.*|DB_CONNECTION=sqlite|" .env || true
-sed -i "s|^DB_DATABASE=.*|DB_DATABASE=database/database.sqlite|" .env || true
-sed -i "s|^SESSION_DRIVER=.*|SESSION_DRIVER=file|" .env || true
-sed -i "s|^CACHE_STORE=.*|CACHE_STORE=file|" .env || true
-sed -i "s|^QUEUE_CONNECTION=.*|QUEUE_CONNECTION=sync|" .env || true
+# Tulis variabel penting ke .env (override nilai lama)
+sed -i "s|^SESSION_DRIVER=.*|SESSION_DRIVER=file|" .env 2>/dev/null || true
+sed -i "s|^CACHE_STORE=.*|CACHE_STORE=file|" .env 2>/dev/null || true
+sed -i "s|^QUEUE_CONNECTION=.*|QUEUE_CONNECTION=sync|" .env 2>/dev/null || true
 
-# Tulis APP_KEY ke .env bila kosong
+# Tulis APP_KEY ke .env bila belum ada yang valid
 if ! grep -q '^APP_KEY=base64:' .env; then
-    sed -i "s|^APP_KEY=.*|APP_KEY=${APP_KEY}|" .env || true
+    sed -i "s|^APP_KEY=.*|APP_KEY=${APP_KEY}|" .env || echo "APP_KEY=${APP_KEY}" >> .env
 fi
 
 # ============================================================
@@ -60,7 +51,7 @@ php artisan view:clear || true
 php artisan storage:link --force || true
 
 # ============================================================
-# STEP 6: Jalankan migrasi database (SQLite)
+# STEP 6: Jalankan migrasi database
 # ============================================================
 echo "=== Menjalankan Database Migration ==="
 php artisan migrate --force 2>&1 || echo "Peringatan: Migrasi gagal. Melanjutkan..."
