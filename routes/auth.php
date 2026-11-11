@@ -44,14 +44,6 @@ Route::middleware('guest')->group(function () {
 
 // Route untuk Authenticated User (Sudah Login)
 Route::middleware('auth')->group(function () {
-    // Route Inventaris Aset IT
-    Route::get('/dashboard', [AssetController::class, 'index'])->name('dashboard');
-    Route::get('/assets/export-pdf', [AssetController::class, 'exportPdf'])->name('assets.exportPdf');
-    Route::get('/assets/{id}', [AssetController::class, 'show'])->name('assets.show');
-    Route::post('/assets', [AssetController::class, 'store'])->name('assets.store');
-    Route::delete('/assets/{id}', [AssetController::class, 'destroy'])->name('assets.destroy');
-    Route::post('/maintenances', [AssetController::class, 'storeMaintenance'])->name('maintenances.store');
-
     // Route bawaan Breeze Auth
     Route::get('verify-email', EmailVerificationPromptController::class)
         ->name('verification.notice');
