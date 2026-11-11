@@ -53,8 +53,12 @@ class AssetController extends Controller
             ->pluck('total', 'kategori')
             ->toArray();
 
+        $isSqlite = DB::getDriverName() === 'sqlite';
+        $monthFunc = $isSqlite ? "CAST(strftime('%m', tanggal_servis) as integer)" : "MONTH(tanggal_servis)";
+        $createdMonthFunc = $isSqlite ? "CAST(strftime('%m', created_at) as integer)" : "MONTH(created_at)";
+
         $maintenanceMonthly = Maintenance::select(
-            DB::raw('MONTH(tanggal_servis) as month'),
+            DB::raw("{$monthFunc} as month"),
             DB::raw('SUM(biaya) as total_biaya')
         )
         ->whereYear('tanggal_servis', date('Y'))
@@ -68,7 +72,7 @@ class AssetController extends Controller
         }
 
         $peminjamanMonthly = Asset::where('status', 'Digunakan')
-            ->select(DB::raw('MONTH(created_at) as month'), DB::raw('count(*) as total'))
+            ->select(DB::raw("{$createdMonthFunc} as month"), DB::raw('count(*) as total'))
             ->groupBy('month')
             ->pluck('total', 'month')
             ->toArray();

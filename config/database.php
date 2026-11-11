@@ -10,7 +10,7 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'default' => env('DB_CONNECTION', 'mysql'),
+    'default' => env('DB_CONNECTION', (env('MYSQL_URL') || env('MYSQLHOST') || env('DATABASE_URL')) ? 'mysql' : (env('PGHOST') ? 'pgsql' : 'sqlite')),
 
     /*
     |--------------------------------------------------------------------------

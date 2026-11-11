@@ -9,7 +9,12 @@ if [ -z "$APP_KEY" ]; then
 fi
 
 # Pastikan folder storage dan cache writable
+mkdir -p storage/framework/{sessions,views,cache} bootstrap/cache database 2>/dev/null || true
 chmod -R 777 storage bootstrap/cache 2>/dev/null || true
+
+# Siapkan database SQLite jika tidak ada konfigurasi database MySQL/Postgres
+touch database/database.sqlite 2>/dev/null || true
+chmod 666 database/database.sqlite 2>/dev/null || true
 
 # Link storage jika belum ada
 php artisan storage:link || true
